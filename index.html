@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Stream</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #1db954, #191414);
+    color: white;
+    text-align: center;
+}
+.cover img {
+    width: 250px; /* Adjust width as needed */
+    height: 250px; /* Adjust height as needed */
+    border-radius: 15px; /* Rounded edges for a modern look */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Adds a 3D depth effect */
+    transition: transform 0.3s ease-in-out;
+}
+
+.cover img:hover {
+    transform: scale(1.05); /* Slight zoom effect when hovered */
+}
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+header {
+    padding: 50px;
+    font-size: 24px;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.player {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.dark-mode {
+    background: black;
+    color: white;
+}
+
+footer {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">🎵 Music Stream</div>
+        <input type="text" placeholder="Search music...">
+        <button class="profile">Profile</button>
+    </nav>
+    <button id="playPause">▶️ Play</button>
+<input type="range" id="volume" min="0" max="100" value="50">
+<button id="themeToggle">Toggle Dark Mode</button>
+    <header>
+        <h1>Discover New Music</h1>
+        <p>Explore trending playlists and artists.</p>
+    </header>
+
+    <main>
+        <section class="player">
+            <div class="cover">
+                <img src="WhatsApp Image 2025-05-20 at 11.52.26_6cc32a6b.jpg" alt="Song Cover">
+            </div>
+            <div class="controls">
+                <button>⏪</button>
+                <button>▶️</button>
+                <button>⏩</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Music Stream | Follow us on social media!</p>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+    const playButton = document.querySelector("#playPause");
+    const audio = new Audio("WhatsApp Audio 2025-05-20 at 11.49.09_25a08df1.mp3"); // Replace with actual song file
+    const volumeSlider = document.querySelector("#volume");
+    const themeToggle = document.querySelector("#themeToggle");
+
+    let isPlaying = false;
+
+    playButton.addEventListener("click", () => {
+        if (isPlaying) {
+            audio.pause();
+            playButton.textContent = "▶️ Play";
+        } else {
+            audio.play();
+            playButton.textContent = "⏸️ Pause";
+        }
+        isPlaying = !isPlaying;
+    });
+
+    volumeSlider.addEventListener("input", (event) => {
+        audio.volume = event.target.value / 100;
+    });
+
+    themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+    });
+});
+    </script>
+</body>
+</html>
