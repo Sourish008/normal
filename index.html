@@ -1,121 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Stream</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-      body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #1db954, #191414);
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spotify Clone</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Spotify+Font:wght@400;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+  /* Reset and base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background-color: #121212;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  /* Header */
+  header {
+    background-color: #1db954;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  header h1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 0.15rem;
+    margin: 0;
     color: white;
+    user-select: none;
+  }
+  /* Search box */
+  #search-container {
+    margin-left: auto;
+    position: relative;
+    width: 300px;
+  }
+  #search-input {
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    outline: none;
+  }
+  #search-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    fill: #888;
+  }
+  /* Main content */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 2rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .playlist {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .song-card {
+    background-color: #181818;
+    border-radius: 8px;
+    display: flex;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    align-items: center;
+    padding: 0.5rem;
+  }
+  .song-card:hover {
+    background-color: #282828;
+  }
+  .album-art {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    object-fit: cover;
+  }
+  .song-details {
+    flex-grow: 1;
+    margin-left: 1rem;
+    overflow: hidden;
+  }
+  .song-title {
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .song-artist {
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: #b3b3b3;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  /* Player */
+  footer {
+    background-color: #181818;
+    border-top: 1px solid #282828;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+  }
+  #now-playing-info {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+  }
+  #now-playing-art {
+    width: 56px;
+    height: 56px;
+    border-radius: 4px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+  #now-playing-text {
+    margin-left: 1rem;
+    overflow: hidden;
+  }
+  #now-playing-title {
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  #now-playing-artist {
+    font-weight: 400;
+    font-size: 0.875rem;
+    color: #b3b3b3;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  /* Player controls */
+  #player-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 2rem;
+  }
+  button {
+    background: none;
+    border: none;
+    color: #1db954;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: transform 0.2s ease;
+  }
+  button:hover {
+    transform: scale(1.2);
+  }
+  /* Progress bar */
+  #progress-container {
+    flex-grow: 1;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    height: 4px;
+    background-color: #404040;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+  }
+  #progress {
+    background-color: #1db954;
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+  }
+  #time-display {
+    font-size: 0.75rem;
+    color: #b3b3b3;
+    width: 50px;
     text-align: center;
-}
-.cover img {
-    width: 250px; /* Adjust width as needed */
-    height: 250px; /* Adjust height as needed */
-    border-radius: 15px; /* Rounded edges for a modern look */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Adds a 3D depth effect */
-    transition: transform 0.3s ease-in-out;
-}
-
-.cover img:hover {
-    transform: scale(1.05); /* Slight zoom effect when hovered */
-}
-nav {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.8);
-}
-
-header {
-    padding: 50px;
-    font-size: 24px;
-}
-
-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 30px;
-}
-
-.player {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-.dark-mode {
-    background: black;
-    color: white;
-}
-
-footer {
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.8);
-}
-    </style>
+    user-select: none;
+  }
+  /* Scrollbar styling */
+  main::-webkit-scrollbar {
+    width: 8px;
+  }
+  main::-webkit-scrollbar-thumb {
+    background-color: #2dbd6e;
+    border-radius: 4px;
+  }
+</style>
 </head>
 <body>
-    <nav>
-        <div class="logo">🎵 Music Stream</div>
-        <input type="text" placeholder="Search music...">
-        <button class="profile">Profile</button>
-    </nav>
-    <button id="playPause">▶️ Play</button>
-<input type="range" id="volume" min="0" max="100" value="50">
-<button id="themeToggle">Toggle Dark Mode</button>
-    <header>
-        <h1>Discover New Music</h1>
-        <p>Explore trending playlists and artists.</p>
-    </header>
+<header>
+  <h1>SPA<span style="color:#121212;">TIFY</span></h1>
+  <div id="search-container">
+    <input id="search-input" type="text" placeholder="Search songs, artists..." />
+    <svg id="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16a6.471 6.471 0 004.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM10 14a4 4 0 110-8 4 4 0 010 8z"/></svg>
+  </div>
+</header>
+<main>
+  <div class="playlist" id="playlist"></div>
+</main>
+<footer>
+  <div id="now-playing-info">
+    <img id="now-playing-art" src="" alt="Album Art" />
+    <div id="now-playing-text">
+      <div id="now-playing-title">Nothing Playing</div>
+      <div id="now-playing-artist"></div>
+    </div>
+  </div>
+  <div id="player-controls">
+    <button id="prev-btn" title="Previous">&#9664;&#9664;</button>
+    <button id="play-pause-btn" title="Play/Pause">&#9654;</button>
+    <button id="next-btn" title="Next">&#9654;&#9654;</button>
+  </div>
+  <div id="progress-container" title="Seek">
+    <div id="progress"></div>
+  </div>
+  <div id="time-display">0:00</div>
+</footer>
+<script>
+  // Sample song data - using royalty-free music URLs
+  const songs = [
+    {
+      title: "Better Days",
+      artist: "Bensound",
+      albumArt: "https://www.bensound.com/bensound-img/betterdays.jpg",
+      audioSrc: "https://www.bensound.com/bensound-music/bensound-betterdays.mp3"
+    },
+    {
+      title: "Sunny",
+      artist: "Bensound",
+      albumArt: "https://www.bensound.com/bensound-img/sunny.jpg",
+      audioSrc: "https://www.bensound.com/bensound-music/bensound-sunny.mp3"
+    },
+    {
+      title: "Energy",
+      artist: "Bensound",
+      albumArt: "https://www.bensound.com/bensound-img/energy.jpg",
+      audioSrc: "https://www.bensound.com/bensound-music/bensound-energy.mp3"
+    },
+    {
+      title: "Jazz Frenchy",
+      artist: "Bensound",
+      albumArt: "https://www.bensound.com/bensound-img/jazzyfrenchy.jpg",
+      audioSrc: "https://www.bensound.com/bensound-music/bensound-jazzyfrenchy.mp3"
+    },
+    {
+      title: "Moose",
+      artist: "Bensound",
+      albumArt: "https://www.bensound.com/bensound-img/moose.jpg",
+      audioSrc: "https://www.bensound.com/bensound-music/bensound-moose.mp3"
+    },
+    {
+      title: "Rahii",
+      artist: "Soham Naik",
+      albumArt: "cover.jpg",
+      audioSrc: "song.mp3"
+    }
+  ];
 
-    <main>
-        <section class="player">
-            <div class="cover">
-                <img src="WhatsApp Image 2025-05-20 at 11.52.26_6cc32a6b.jpg" alt="Song Cover">
-            </div>
-            <div class="controls">
-                <button>⏪</button>
-                <button>▶️</button>
-                <button>⏩</button>
-            </div>
-        </section>
-    </main>
+  const playlistEl = document.getElementById('playlist');
+  const nowPlayingArt = document.getElementById('now-playing-art');
+  const nowPlayingTitle = document.getElementById('now-playing-title');
+  const nowPlayingArtist = document.getElementById('now-playing-artist');
+  const playPauseBtn = document.getElementById('play-pause-btn');
+  const prevBtn = document.getElementById('prev-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const progressContainer = document.getElementById('progress-container');
+  const progress = document.getElementById('progress');
+  const timeDisplay = document.getElementById('time-display');
+  const searchInput = document.getElementById('search-input');
 
-    <footer>
-        <p>© 2025 Music Stream | Follow us on social media!</p>
-    </footer>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-    const playButton = document.querySelector("#playPause");
-    const audio = new Audio("WhatsApp Audio 2025-05-20 at 11.49.09_25a08df1.mp3"); // Replace with actual song file
-    const volumeSlider = document.querySelector("#volume");
-    const themeToggle = document.querySelector("#themeToggle");
+  let currentIndex = -1;
+  let isPlaying = false;
+  let audio = new Audio();
 
-    let isPlaying = false;
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return mins + ':' + (secs < 10 ? '0' : '') + secs;
+  }
 
-    playButton.addEventListener("click", () => {
-        if (isPlaying) {
-            audio.pause();
-            playButton.textContent = "▶️ Play";
-        } else {
-            audio.play();
-            playButton.textContent = "⏸️ Pause";
-        }
-        isPlaying = !isPlaying;
+  function loadSong(index) {
+    if (index < 0 || index >= songs.length) return;
+    let song = songs[index];
+    audio.src = song.audioSrc;
+    nowPlayingArt.src = song.albumArt;
+    nowPlayingTitle.textContent = song.title;
+    nowPlayingArtist.textContent = song.artist;
+    currentIndex = index;
+    highlightCurrent();
+  }
+
+  function playSong() {
+    audio.play();
+    isPlaying = true;
+    playPauseBtn.innerHTML = '&#10073;&#10073;'; // Pause icon
+  }
+
+  function pauseSong() {
+    audio.pause();
+    isPlaying = false;
+    playPauseBtn.innerHTML = '&#9654;'; // Play icon
+  }
+
+  function togglePlayPause() {
+    if (isPlaying) {
+      pauseSong();
+    } else {
+      playSong();
+    }
+  }
+
+  function playPrev() {
+    let index = currentIndex - 1;
+    if (index < 0) index = songs.length - 1;
+    loadSong(index);
+    playSong();
+  }
+
+  function playNext() {
+    let index = currentIndex + 1;
+    if (index >= songs.length) index = 0;
+    loadSong(index);
+    playSong();
+  }
+
+  function updateProgress() {
+    if (!audio.duration) return;
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progress.style.width = percent + '%';
+    timeDisplay.textContent = formatTime(audio.currentTime);
+  }
+
+  function setProgress(e) {
+    const clickX = e.offsetX;
+    const width = progressContainer.clientWidth;
+    const newTime = (clickX / width) * audio.duration;
+    audio.currentTime = newTime;
+  }
+
+  function highlightCurrent() {
+    document.querySelectorAll('.song-card').forEach((card, idx) => {
+      if (idx === currentIndex) {
+        card.style.backgroundColor = '#1db954';
+        card.style.color = '#121212';
+      } else {
+        card.style.backgroundColor = '';
+        card.style.color = '#fff';
+      }
     });
+  }
 
-    volumeSlider.addEventListener("input", (event) => {
-        audio.volume = event.target.value / 100;
+  function renderPlaylist(filteredSongs) {
+    playlistEl.innerHTML = '';
+    filteredSongs.forEach((song, index) => {
+      const card = document.createElement('div');
+      card.classList.add('song-card');
+      card.innerHTML = `
+        <img src="${song.albumArt}" alt="Album art" class="album-art" />
+        <div class="song-details">
+          <div class="song-title">${song.title}</div>
+          <div class="song-artist">${song.artist}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => {
+        loadSong(songs.indexOf(song));
+        playSong();
+      });
+      playlistEl.appendChild(card);
     });
+    highlightCurrent();
+  }
 
-    themeToggle.addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
-    });
-});
-    </script>
+  function filterSongs() {
+    const query = searchInput.value.toLowerCase();
+    const filtered = songs.filter(song =>
+      song.title.toLowerCase().includes(query) ||
+      song.artist.toLowerCase().includes(query)
+    );
+    renderPlaylist(filtered);
+  }
+
+  // Event listeners
+  playPauseBtn.addEventListener('click', togglePlayPause);
+  prevBtn.addEventListener('click', playPrev);
+  nextBtn.addEventListener('click', playNext);
+
+  audio.addEventListener('timeupdate', updateProgress);
+  audio.addEventListener('ended', playNext);
+
+  progressContainer.addEventListener('click', setProgress);
+  searchInput.addEventListener('input', filterSongs);
+
+  // Initial render
+  renderPlaylist(songs);
+</script>
 </body>
 </html>
+
